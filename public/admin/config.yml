@@ -1,0 +1,42 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "public/images/blog"
+public_folder: "/images/blog"
+
+collections:
+  - name: "blog"
+    label: "Posts"
+    folder: "src/content/blog"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - label: "Title"
+        name: "title"
+        widget: "string"
+      - label: "Date"
+        name: "date"
+        widget: "string"
+        hint: 'e.g. "Sat 11th Oct 2025"'
+      - label: "Category"
+        name: "category"
+        widget: "select"
+        options:
+          - "Medien"
+          - "Kultur"
+          - "Gesellschaft"
+          - "Strategie"
+          - "Technologie"
+          - "Wirtschaft"
+      - label: "Cover Image"
+        name: "image"
+        widget: "image"
+        required: false
+      - label: "LinkedIn Post URL"
+        name: "linkedin"
+        widget: "string"
+        required: false
+      - label: "Body"
+        name: "body"
+        widget: "markdown"
