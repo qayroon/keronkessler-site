@@ -23,7 +23,7 @@ html {
 body { min-height: 100dvh; overflow-x: hidden; }
 
 a { color: var(--ink); text-decoration: none; }
-a:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #3B82C4; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #9EC9E8; }
 
 img { display: block; max-width: 100%; }
 
@@ -45,7 +45,7 @@ img { display: block; max-width: 100%; }
 /* ─── Tile (thumbnail) ────────────────────────────────────── */
 .kk-tile {
   display: block;
-  width: 100%;
+  width: 160px;
   padding: 0;
   border: 0;
   cursor: pointer;
@@ -90,7 +90,7 @@ img { display: block; max-width: 100%; }
 .kk-link:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
-  text-decoration-color: #3B82C4;
+  text-decoration-color: #9EC9E8;
   color: var(--ink);
 }
 
@@ -189,7 +189,6 @@ img { display: block; max-width: 100%; }
 .kk-card-cover {
   width: 100%;
   aspect-ratio: 3 / 2;
-  border-radius: 8px;
   object-fit: cover;
   background: #E8F2FA;
   view-transition-name: none;

@@ -53,7 +53,7 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
     </div>
 
     <!-- Main content -->
-    <div style="position:relative;padding:20px 24px 48px;box-sizing:border-box;display:flex;flex-direction:column;gap:64px;min-height:100dvh">
+    <div style="position:relative;padding:20px 24px 48px;box-sizing:border-box;display:flex;flex-direction:column;gap:64px;min-height:100dvh;scroll-snap-align:start">
 
       <!-- Header: About + Nav -->
       <header style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:32px">
@@ -105,7 +105,7 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
       <section aria-label="Texte">
         <div
           id="kk-gallery"
-          style="display:grid;grid-template-columns:repeat(auto-fill,160px);gap:10px;justify-content:center"
+          style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px"
         >
           {posts.map(post => (
             <button
@@ -254,7 +254,7 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
         cardBody.innerHTML    = source.innerHTML;
 
         if (cover) {
-          cardCover.innerHTML = `<img src="${cover}" alt="" style="width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:8px" />`;
+          cardCover.innerHTML = `<img src="${cover}" alt="" style="width:100%;aspect-ratio:3/2;object-fit:cover" />`;
         } else {
           cardCover.style.background = tint;
           cardCover.innerHTML = '';
