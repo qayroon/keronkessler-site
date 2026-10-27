@@ -1,9 +1,11 @@
 ---
 title: "Culture ist nicht das, wofür wir sie halten"
-date: "Mon 20th Oct 2025"
-category: "Kultur"
+date: "2025-10-20"
+category: "Sociology"
+cover: "/images/blog/culture.jpeg"
+selected: false
+type: "text"
 linkedin: "https://www.linkedin.com/feed/update/urn:li:share:7385968760215638016/"
-image: "/images/blog/culture.jpeg"
 ---
 
 Culture hier, Culture da. Aber was ist eigentlich diese Culture, von der immer alle reden?

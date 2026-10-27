@@ -1,9 +1,11 @@
 ---
 title: "Die Krise der Branche ist kein Ausnahmezustand"
-date: "Thu 15th Jan 2026"
-category: "Strategie"
+date: "2026-01-15"
+category: "Marketing"
+cover: "/images/blog/ad-industry.jpeg"
+selected: true
+type: "text"
 linkedin: "https://www.linkedin.com/feed/update/urn:li:share:7417484205351354368/"
-image: "/images/blog/ad-industry.jpeg"
 ---
 
 Die Krise der Branche ist real. Aber vielleicht erleben wir gerade vor allem: mehr von ihr.

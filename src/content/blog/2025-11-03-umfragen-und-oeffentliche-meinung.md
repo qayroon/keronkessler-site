@@ -1,9 +1,11 @@
 ---
 title: "Umfragen und öffentliche Meinung"
-date: "Mon 03rd Nov 2025"
-category: "Gesellschaft"
+date: "2025-11-03"
+category: "Sociology"
+cover: "/images/blog/politikbarometer.jpeg"
+selected: false
+type: "text"
 linkedin: "https://www.linkedin.com/feed/update/urn:li:share:7393561165072687104/"
-image: "/images/blog/politikbarometer.jpeg"
 ---
 
 Das Dilemma rund um das Politbarometer des ZDF hat Empörung ausgelöst und zu Recht, finde ich, weil offenbar Prozentzahlen schneller fliegen können als ihre Methoden.

@@ -1,9 +1,11 @@
 ---
 title: "Authentizität ist kein Zustand"
-date: "Sat 10th Jan 2026"
-category: "Medien"
+date: "2026-01-10"
+category: "Marketing"
+cover: "/images/blog/authenticity.jpeg"
+selected: true
+type: "text"
 linkedin: "https://www.linkedin.com/feed/update/urn:li:share:7415840030440550400/"
-image: "/images/blog/authenticity.jpeg"
 ---
 
 Authentizität ist das Thema der Stunde. Und diejenigen, die es fordern, scheinen unermüdlich mehr zu wollen!

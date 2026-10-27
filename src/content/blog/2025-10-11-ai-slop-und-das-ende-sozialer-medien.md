@@ -1,9 +1,11 @@
 ---
 title: "AI Slop und das Ende sozialer Medien"
-date: "Sat 11th Oct 2025"
-category: "Medien"
+date: "2025-10-11"
+category: "Sociology"
+cover: "/images/blog/ai-slop.jpeg"
+selected: false
+type: "text"
 linkedin: "https://www.linkedin.com/feed/update/urn:li:share:7382826989096873984/"
-image: "/images/blog/ai-slop.jpeg"
 ---
 
 AI Slop, AI Slop, und noch mehr AI Slop (!)

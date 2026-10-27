@@ -1,9 +1,11 @@
 ---
 title: "Warum plötzlich alle über Gen Alpha sprechen"
-date: "Mon 10th Nov 2025"
-category: "Strategie"
+date: "2025-11-10"
+category: "Marketing"
+cover: "/images/blog/gen-alpha.jpeg"
+selected: true
+type: "text"
 linkedin: "https://www.linkedin.com/feed/update/urn:li:share:7393561165072687104/"
-image: "/images/blog/gen-alpha.jpeg"
 ---
 
 Plötzlich redet jeder über die Generation Alpha!

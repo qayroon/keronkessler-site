@@ -1,32 +1,5 @@
 ---
-import Base from '../layouts/Base.astro';
+import SiteLayout from '../components/SiteLayout.astro';
 ---
 
-<Base title="Home" currentPage="/">
-  <h1 class="page-heading page-heading--top">Keron Kessler</h1>
-
-  <div class="page-cover-wrap">
-    <div class="page-cover__frame">
-      <img
-        class="page-cover__img"
-        src="/images/home-cover.jpeg"
-        alt=""
-        aria-hidden="true"
-        loading="eager"
-        width="680"
-        height="383"
-      />
-    </div>
-  </div>
-
-  <div class="home-below-image">
-    <blockquote class="home-quote">
-      Jede Zeit, jede Kultur, jede Sitte und Tradition hat ihren Stil, hat ihre ihr zukommenden Zartheiten und Härten, Schönheiten und Grausamkeiten, hält gewisse Leiden für selbstverständlich und nimmt gewisse Übel geduldig hin.
-    </blockquote>
-    <p class="home-quote__attribution">— Hermann Hesse, Demian</p>
-    <div class="home-welcome">
-      <p>Welcome! You've found your way to a small corner of my digital life, a space where I think out loud about brands, behaviour, and the world we're all navigating together.</p>
-      <p>I'm Keron: strategist, consultant, student of how things work, and firmly convinced that the most interesting conversations happen at the intersection of ideas and perspectives that don't usually meet.</p>
-    </div>
-  </div>
-</Base>
+<SiteLayout />

@@ -18,20 +18,32 @@ collections:
       - label: "Date"
         name: "date"
         widget: "string"
-        hint: 'e.g. "Sat 11th Oct 2025"'
+        hint: 'ISO date, e.g. "2026-01-15"'
       - label: "Category"
         name: "category"
         widget: "select"
         options:
-          - "Medien"
-          - "Kultur"
-          - "Gesellschaft"
-          - "Strategie"
-          - "Technologie"
-          - "Wirtschaft"
+          - "Sociology"
+          - "Marketing"
       - label: "Cover Image"
-        name: "image"
+        name: "cover"
         widget: "image"
+        required: false
+        hint: "3:2 ratio recommended"
+      - label: "Selected Work"
+        name: "selected"
+        widget: "boolean"
+        default: false
+        hint: "Show in Selected Work nav (max 3)"
+      - label: "Type"
+        name: "type"
+        widget: "select"
+        options:
+          - label: "Text"
+            value: "text"
+          - label: "Project"
+            value: "project"
+        default: "text"
         required: false
       - label: "LinkedIn Post URL"
         name: "linkedin"
