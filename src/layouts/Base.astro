@@ -1,13 +1,12 @@
 ---
-import Nav from '../components/Nav.astro';
 import '../styles/global.css';
 
 interface Props {
   title: string;
-  currentPage?: string;
+  description?: string;
 }
 
-const { title, currentPage = '/' } = Astro.props;
+const { title, description = 'Keron Kessler' } = Astro.props;
 ---
 
 <!doctype html>
@@ -15,53 +14,13 @@ const { title, currentPage = '/' } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Keron Kessler — personal website" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title} — Keron Kessler</title>
+    <meta name="description" content={description} />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>Keron Kessler</title>
   </head>
   <body>
-    <div id="cursor-dot" aria-hidden="true"></div>
-    <Nav currentPage={currentPage} />
-    <main>
-      <slot />
-    </main>
-    <footer class="site-footer">
-      <span class="site-footer__text">What if things aren't all bad — but just new and unfamiliar?</span>
-    </footer>
+    <slot />
   </body>
 </html>
-
-<script>
-  const isTouch = window.matchMedia('(pointer: coarse)').matches;
-  const dot = document.getElementById('cursor-dot');
-
-  if (isTouch || !dot) {
-    // Touch device: don't render dot, leave cursor as-is
-    if (dot) dot.style.display = 'none';
-  } else {
-    document.body.style.cursor = 'none';
-
-    let x = -100, y = -100;
-    dot.style.left = x + 'px';
-    dot.style.top  = y + 'px';
-
-    document.addEventListener('mousemove', e => {
-      x = e.clientX;
-      y = e.clientY;
-      dot.style.left = x + 'px';
-      dot.style.top  = y + 'px';
-    });
-
-    const hoverTargets = 'a, button, .writing-entry__title, .writing-entry__toggle';
-    document.querySelectorAll(hoverTargets).forEach(el => {
-      el.addEventListener('mouseenter', () => {
-        dot.style.transform = 'translate(-50%, -50%) scale(2.5)';
-        dot.style.background = '#15803D';
-      });
-      el.addEventListener('mouseleave', () => {
-        dot.style.transform = 'translate(-50%, -50%)';
-        dot.style.background = '#1A1A1A';
-      });
-    });
-  }
-</script>

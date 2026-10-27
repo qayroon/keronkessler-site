@@ -1,0 +1,370 @@
+---
+import { getCollection } from 'astro:content';
+import '../styles/global.css';
+
+interface Props {
+  openSlug?: string;
+}
+
+const { openSlug } = Astro.props;
+
+const allPosts = await getCollection('blog');
+allPosts.sort((a, b) => b.data.date.localeCompare(a.data.date));
+
+const selectedOverride = allPosts.filter(p => p.data.selected);
+const selected = selectedOverride.length > 0 ? selectedOverride.slice(0, 3) : allPosts.slice(0, 3);
+
+const tints = ['#DCEAF5', '#CFE3F2', '#E8F2FA', '#D6E8F4'];
+
+const posts = allPosts.map((post, i) => ({
+  id: post.id,
+  slug: post.data.slug,
+  title: post.data.title,
+  category: post.data.category,
+  group: post.data.group,
+  date: post.data.date,
+  cover: post.data.cover,
+  tint: tints[i % tints.length],
+  html: post.rendered?.html ?? '',
+}));
+
+const siteEntries = await getCollection('site');
+const site = siteEntries[0];
+const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Keron Kessler — strategist and writer on culture, media and marketing" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>Keron Kessler</title>
+  </head>
+  <body data-open-slug={openSlug ?? ''}>
+
+    <!-- Background blobs -->
+    <div aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0">
+      <div class="kk-blob-a" style="position:absolute;width:60vw;height:60vw;left:-10vw;top:-20vw;border-radius:50%;background:var(--accent);opacity:.55;filter:blur(90px)"></div>
+      <div class="kk-blob-b" style="position:absolute;width:40vw;height:40vw;right:-8vw;top:30%;border-radius:50%;background:var(--accent);opacity:.4;filter:blur(110px)"></div>
+    </div>
+
+    <!-- Main content -->
+    <div style="position:relative;padding:20px 24px 48px;box-sizing:border-box;display:flex;flex-direction:column;gap:64px;min-height:100dvh;scroll-snap-align:start">
+
+      <!-- Header: About + Nav -->
+      <header style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:32px">
+
+        <!-- About -->
+        <div style="flex:1 1 320px;max-width:460px;display:flex;flex-direction:column;gap:14px">
+          {aboutParagraphs.map((p: string) => <p>{p}</p>)}
+          <p>
+            Contact:<br />
+            <a href={`mailto:${site.data.contact_email}`}>{site.data.contact_email}</a>
+          </p>
+        </div>
+
+        <!-- Nav: Filter + Selected Work -->
+        <nav aria-label="Filter and selected work" style="flex:0 1 300px;display:flex;flex-direction:column;gap:14px">
+          <div>
+            <span style="font-weight:700">Filter:</span>
+            <div id="kk-filters" style="display:flex;flex-direction:column;margin-top:4px">
+              <button class="kk-link kk-filter-btn" data-filter="all" aria-pressed="true" style="opacity:1">All</button>
+              <button class="kk-link kk-filter-btn" data-filter="sociology" aria-pressed="false" style="opacity:0.45">Sociology</button>
+              <button class="kk-link kk-filter-btn" data-filter="marketing" aria-pressed="false" style="opacity:0.45">Marketing</button>
+            </div>
+          </div>
+          {selected.length > 0 && (
+            <div>
+              <span style="font-weight:700">Selected Writing:</span>
+              <div style="display:flex;flex-direction:column;margin-top:4px">
+                {selected.map(post => (
+                  <button class="kk-link kk-open-btn" data-slug={post.id} style="min-height:24px">
+                    {post.data.title}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </nav>
+      </header>
+
+      <!-- Hero lettering -->
+      <section aria-label="Hero" style="display:flex;justify-content:center">
+        <img
+          src="/ich-bleibe-neugierig-bold.png"
+          alt="Ich bleibe neugierig"
+          style="width:min(560px,100%)"
+        />
+      </section>
+
+      <!-- Gallery -->
+      <section aria-label="Articles">
+        <div
+          id="kk-gallery"
+          style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px"
+        >
+          {posts.map(post => (
+            <button
+              class="kk-tile kk-open-btn"
+              data-slug={post.id}
+              data-group={post.group}
+              aria-label={post.title}
+              style={`background:${post.tint}`}
+            >
+              {post.cover
+                ? <img src={post.cover} alt="" />
+                : null
+              }
+            </button>
+          ))}
+        </div>
+      </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="kk-footer" aria-label="Legal">
+      <a href="/impressum">Impressum</a>
+      <a href="/datenschutz">Datenschutz</a>
+    </footer>
+
+    <!-- Glass overlay (hover effect) -->
+    <div id="kk-glass" class="kk-glass" aria-hidden="true"></div>
+
+    <!-- Modal dialog -->
+    <div
+      id="kk-overlay"
+      class="kk-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-label=""
+    >
+      <button
+        id="kk-veil"
+        class="kk-veil"
+        aria-label="Close"
+        tabindex="-1"
+      ></button>
+
+      <article id="kk-card" class="kk-card" tabindex="-1">
+        <button id="kk-close" class="kk-close" aria-label="Close">
+          <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+            <path d="M3 3l10 10M13 3L3 13" />
+          </svg>
+        </button>
+        <div class="kk-card-inner">
+          <div id="kk-card-cover-wrap">
+            <div id="kk-card-cover" class="kk-card-cover"></div>
+          </div>
+          <div class="kk-card-meta">
+            <span id="kk-card-cat" class="kk-card-cat"></span>
+            <h2 id="kk-card-title" class="kk-card-title"></h2>
+          </div>
+          <div id="kk-card-body" class="kk-card-body"></div>
+          <p class="kk-card-signoff">Merci und adieu,<br />Keron</p>
+        </div>
+      </article>
+    </div>
+
+    <!-- Hidden post content (pre-rendered HTML from glob loader) -->
+    {posts.map(post => (
+      <div
+        id={`post-body-${post.id}`}
+        data-title={post.title}
+        data-cat={post.category}
+        data-date={post.date}
+        data-cover={post.cover ?? ''}
+        data-tint={post.tint}
+        hidden
+        set:html={post.html}
+      />
+    ))}
+
+    <script>
+      // ── State ──────────────────────────────────────────────────
+      let filter = 'all';
+      let openSlug: string | null = null;
+      let lastFocus: HTMLElement | null = null;
+      let hoverCount = 0;
+
+      const gallery   = document.getElementById('kk-gallery')!;
+      const glass     = document.getElementById('kk-glass')!;
+      const overlay   = document.getElementById('kk-overlay')!;
+      const card      = document.getElementById('kk-card')!;
+      const veil      = document.getElementById('kk-veil')!;
+      const closeBtn  = document.getElementById('kk-close')!;
+      const cardCat   = document.getElementById('kk-card-cat')!;
+      const cardTitle = document.getElementById('kk-card-title')!;
+      const cardCover = document.getElementById('kk-card-cover')!;
+      const cardBody  = document.getElementById('kk-card-body')!;
+
+      // ── Filter ─────────────────────────────────────────────────
+      document.getElementById('kk-filters')!.addEventListener('click', e => {
+        const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.kk-filter-btn');
+        if (!btn) return;
+        filter = btn.dataset.filter!;
+        document.querySelectorAll<HTMLButtonElement>('.kk-filter-btn').forEach(b => {
+          const active = b.dataset.filter === filter;
+          b.setAttribute('aria-pressed', active ? 'true' : 'false');
+          b.style.opacity = active ? '1' : '0.45';
+        });
+        document.querySelectorAll<HTMLButtonElement>('#kk-gallery .kk-tile').forEach(tile => {
+          tile.hidden = filter !== 'all' && tile.dataset.group !== filter;
+        });
+      });
+
+      // ── Cover preload on hover/focus ───────────────────────────
+      function preloadCover(slug: string) {
+        const source = document.getElementById(`post-body-${slug}`);
+        const cover = source?.dataset.cover;
+        if (!cover) return;
+        const sel = `link[rel="preload"][href="${CSS.escape(cover)}"]`;
+        if (document.head.querySelector(sel)) return;
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = cover;
+        document.head.appendChild(link);
+      }
+
+      // ── Hover glass ────────────────────────────────────────────
+      gallery.addEventListener('mouseenter', e => {
+        const tile = (e.target as HTMLElement).closest<HTMLElement>('.kk-tile');
+        if (tile && !openSlug) {
+          hoverCount++;
+          if (hoverCount === 1) glass.classList.add('is-visible');
+          preloadCover(tile.dataset.slug!);
+        }
+      }, true);
+
+      gallery.addEventListener('mouseleave', e => {
+        if ((e.target as HTMLElement).classList.contains('kk-tile')) {
+          hoverCount = Math.max(0, hoverCount - 1);
+          if (hoverCount === 0) glass.classList.remove('is-visible');
+        }
+      }, true);
+
+      gallery.addEventListener('focusin', e => {
+        const tile = (e.target as HTMLElement).closest<HTMLElement>('.kk-tile');
+        if (tile) preloadCover(tile.dataset.slug!);
+      });
+
+      // ── Format date ────────────────────────────────────────────
+      const catMap: Record<string, string> = { Strategie: 'Strategy', Medien: 'Media', Gesellschaft: 'Society', Kultur: 'Culture' };
+
+      function formatDate(iso: string) {
+        const d = new Date(iso + 'T00:00:00');
+        return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      }
+
+      // ── Populate card DOM ──────────────────────────────────────
+      function populateCard(slug: string) {
+        const source = document.getElementById(`post-body-${slug}`);
+        if (!source) return false;
+
+        const title = source.dataset.title!;
+        const cat   = source.dataset.cat!;
+        const date  = source.dataset.date!;
+        const cover = source.dataset.cover!;
+        const tint  = source.dataset.tint!;
+
+        cardCat.textContent   = `${catMap[cat] ?? cat} · ${formatDate(date)}`;
+        cardTitle.textContent = title;
+        cardBody.innerHTML    = source.innerHTML;
+
+        if (cover) {
+          cardCover.innerHTML = `<img src="${cover}" alt="" style="width:100%;aspect-ratio:3/2;object-fit:cover" />`;
+        } else {
+          cardCover.style.background = tint;
+          cardCover.innerHTML = '';
+        }
+        return true;
+      }
+
+      // ── Open post ──────────────────────────────────────────────
+      function openPost(slug: string, pushState = true) {
+        if (!populateCard(slug)) return;
+
+        const doOpen = () => {
+          overlay.setAttribute('aria-label', cardTitle.textContent!);
+          overlay.setAttribute('aria-hidden', 'false');
+          overlay.classList.add('is-open');
+          glass.classList.remove('is-visible');
+          openSlug = slug;
+          if (pushState) history.pushState({ slug }, '', `/texte/${slug}`);
+        };
+
+        const isTile = lastFocus?.classList.contains('kk-tile');
+
+        if ('startViewTransition' in document && isTile) {
+          const tile = lastFocus as HTMLElement;
+          tile.style.viewTransitionName = 'hero';
+
+          const vt = (document as any).startViewTransition(() => {
+            doOpen();
+            tile.style.viewTransitionName = '';
+            cardCover.style.viewTransitionName = 'hero';
+          });
+
+          vt.finished.then(() => {
+            cardCover.style.viewTransitionName = '';
+            card.focus();
+          }).catch(() => {
+            cardCover.style.viewTransitionName = '';
+          });
+        } else {
+          doOpen();
+          requestAnimationFrame(() => card.focus());
+        }
+      }
+
+      // ── Close post ─────────────────────────────────────────────
+      function closePost(popState = false) {
+        cardCover.style.viewTransitionName = '';
+        overlay.classList.remove('is-open');
+        overlay.setAttribute('aria-hidden', 'true');
+        openSlug = null;
+
+        if (!popState) history.pushState({}, '', '/');
+
+        if (lastFocus) {
+          lastFocus.focus();
+          lastFocus = null;
+        }
+      }
+
+      // ── Open-button delegation ─────────────────────────────────
+      document.addEventListener('click', e => {
+        const btn = (e.target as HTMLElement).closest<HTMLElement>('.kk-open-btn');
+        if (!btn) return;
+        lastFocus = btn;
+        openPost(btn.dataset.slug!);
+      });
+
+      // ── Close triggers ─────────────────────────────────────────
+      closeBtn.addEventListener('click', () => closePost());
+      veil.addEventListener('click', () => closePost());
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && openSlug) closePost();
+      });
+
+      // ── Browser back/forward ───────────────────────────────────
+      window.addEventListener('popstate', e => {
+        const slug = (e.state as { slug?: string } | null)?.slug;
+        if (slug) {
+          openPost(slug, false);
+        } else if (openSlug) {
+          closePost(true);
+        }
+      });
+
+      // ── Initial open (direct URL load) ────────────────────────
+      const initialSlug = document.body.dataset.openSlug;
+      if (initialSlug) openPost(initialSlug, false);
+    </script>
+  </body>
+</html>
