@@ -41,6 +41,8 @@ body { min-height: 100dvh; overflow-x: hidden; }
 a { color: var(--ink); text-decoration: none; }
 a:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #9EC9E8; }
 
+::selection { background: #9EC9E8; color: #0A0A0A; }
+
 img { display: block; max-width: 100%; }
 
 /* ─── Blob animations ────────────────────────────────────── */
