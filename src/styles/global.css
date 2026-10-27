@@ -15,6 +15,20 @@
 }
 @font-face {
   font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-MediumItalic.woff2') format('woff2');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Satoshi';
   src: url('/fonts/Satoshi-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
@@ -44,6 +58,7 @@ html {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-body);
+  font-weight: 500;
   font-size: 15px;
   line-height: 1.45;
   -webkit-font-smoothing: antialiased;
@@ -176,7 +191,7 @@ img { display: block; max-width: 100%; }
 .kk-card {
   position: relative;
   width: min(680px, 100%);
-  max-height: 84vh;
+  max-height: calc(100dvh - 48px);
   overflow-y: auto;
   opacity: 0;
   transform: translateY(24px) scale(.94);
@@ -193,17 +208,18 @@ img { display: block; max-width: 100%; }
 /* ─── Close button ────────────────────────────────────────── */
 .kk-close {
   position: sticky;
-  top: 12px;
+  top: 16px;
   float: right;
-  margin: 0 0 0 0;
+  margin: 16px 16px 0 0;
   z-index: 2;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1px solid rgba(10, 10, 10, .12);
+  border: 1px solid #7FB6E6;
   background: rgba(255, 255, 255, .75);
   backdrop-filter: blur(10px);
   cursor: pointer;
+  color: #7FB6E6;
   display: flex;
   align-items: center;
   justify-content: center;

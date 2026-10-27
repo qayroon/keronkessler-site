@@ -70,7 +70,7 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
         <!-- Nav: Filter + Selected Work -->
         <nav aria-label="Filter and selected work" style="flex:0 1 300px;display:flex;flex-direction:column;gap:14px">
           <div>
-            <span>Filter:</span>
+            <span style="font-weight:700">Filter:</span>
             <div id="kk-filters" style="display:flex;flex-direction:column;margin-top:4px">
               <button class="kk-link kk-filter-btn" data-filter="all" aria-pressed="true" style="opacity:1">All</button>
               <button class="kk-link kk-filter-btn" data-filter="sociology" aria-pressed="false" style="opacity:0.45">Sociology</button>
@@ -79,7 +79,7 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
           </div>
           {selected.length > 0 && (
             <div>
-              <span>Selected Work:</span>
+              <span style="font-weight:700">Selected Writing:</span>
               <div style="display:flex;flex-direction:column;margin-top:4px">
                 {selected.map(post => (
                   <button class="kk-link kk-open-btn" data-slug={post.id} style="min-height:24px">
@@ -116,7 +116,7 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
               style={`background:${post.tint}`}
             >
               {post.cover
-                ? <img src={post.cover} alt="" loading="lazy" />
+                ? <img src={post.cover} alt="" />
                 : null
               }
             </button>
@@ -217,11 +217,27 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
         });
       });
 
+      // ── Cover preload on hover/focus ───────────────────────────
+      function preloadCover(slug: string) {
+        const source = document.getElementById(`post-body-${slug}`);
+        const cover = source?.dataset.cover;
+        if (!cover) return;
+        const sel = `link[rel="preload"][href="${CSS.escape(cover)}"]`;
+        if (document.head.querySelector(sel)) return;
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = cover;
+        document.head.appendChild(link);
+      }
+
       // ── Hover glass ────────────────────────────────────────────
       gallery.addEventListener('mouseenter', e => {
-        if ((e.target as HTMLElement).classList.contains('kk-tile') && !openSlug) {
+        const tile = (e.target as HTMLElement).closest<HTMLElement>('.kk-tile');
+        if (tile && !openSlug) {
           hoverCount++;
           if (hoverCount === 1) glass.classList.add('is-visible');
+          preloadCover(tile.dataset.slug!);
         }
       }, true);
 
@@ -231,6 +247,11 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
           if (hoverCount === 0) glass.classList.remove('is-visible');
         }
       }, true);
+
+      gallery.addEventListener('focusin', e => {
+        const tile = (e.target as HTMLElement).closest<HTMLElement>('.kk-tile');
+        if (tile) preloadCover(tile.dataset.slug!);
+      });
 
       // ── Format date ────────────────────────────────────────────
       const catMap: Record<string, string> = { Strategie: 'Strategy', Medien: 'Media', Gesellschaft: 'Society', Kultur: 'Culture' };
