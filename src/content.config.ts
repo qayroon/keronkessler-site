@@ -5,21 +5,22 @@ const blog = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/blog' }),
   schema: z.object({
     title:    z.string(),
+    slug:     z.string(),
     date:     z.string(),
-    category: z.enum(['Sociology', 'Marketing']),
+    category: z.string(),
+    group:    z.enum(['sociology', 'marketing']),
     cover:    z.string().optional(),
     selected: z.boolean().optional().default(false),
     type:     z.enum(['text', 'project']).optional().default('text'),
-    linkedin: z.string().optional(),
   }),
 });
 
 const site = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/site' }),
   schema: z.object({
-    about:             z.string(),
-    contact_email:     z.string(),
-    showreel_caption:  z.string(),
+    about:            z.string(),
+    contact_email:    z.string(),
+    showreel_caption: z.string().optional(),
   }),
 });
 

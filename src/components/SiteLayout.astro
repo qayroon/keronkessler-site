@@ -11,14 +11,18 @@ const { openSlug } = Astro.props;
 const allPosts = await getCollection('blog');
 allPosts.sort((a, b) => b.data.date.localeCompare(a.data.date));
 
-const selected = allPosts.filter(p => p.data.selected).slice(0, 3);
+const selectedOverride = allPosts.filter(p => p.data.selected);
+const selected = selectedOverride.length > 0 ? selectedOverride.slice(0, 3) : allPosts.slice(0, 3);
 
 const tints = ['#DCEAF5', '#CFE3F2', '#E8F2FA', '#D6E8F4'];
 
 const posts = allPosts.map((post, i) => ({
   id: post.id,
+  slug: post.data.slug,
   title: post.data.title,
   category: post.data.category,
+  group: post.data.group,
+  date: post.data.date,
   cover: post.data.cover,
   tint: tints[i % tints.length],
   html: post.rendered?.html ?? '',
@@ -68,14 +72,9 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
           <div>
             <span>Filter:</span>
             <div id="kk-filters" style="display:flex;flex-direction:column;margin-top:4px">
-              {['All', 'Sociology', 'Marketing'].map(label => (
-                <button
-                  class="kk-link kk-filter-btn"
-                  data-filter={label}
-                  aria-pressed={label === 'All' ? 'true' : 'false'}
-                  style={`opacity:${label === 'All' ? 1 : 0.45}`}
-                >{label}</button>
-              ))}
+              <button class="kk-link kk-filter-btn" data-filter="all" aria-pressed="true" style="opacity:1">All</button>
+              <button class="kk-link kk-filter-btn" data-filter="sociology" aria-pressed="false" style="opacity:0.45">Sociology</button>
+              <button class="kk-link kk-filter-btn" data-filter="marketing" aria-pressed="false" style="opacity:0.45">Marketing</button>
             </div>
           </div>
           {selected.length > 0 && (
@@ -93,12 +92,13 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
         </nav>
       </header>
 
-      <!-- Showreel -->
-      <section aria-label="Showreel" style="display:flex;flex-direction:column;align-items:center;gap:8px">
-        <div style="width:min(640px,100%);aspect-ratio:16/9;background:rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;border-radius:4px">
-          <span style="font-size:13px;color:var(--muted)">[Loop video / GIF — tbd]</span>
-        </div>
-        <p style="font-size:13px;color:var(--muted)">{site.data.showreel_caption}</p>
+      <!-- Hero lettering -->
+      <section aria-label="Hero" style="display:flex;justify-content:center">
+        <img
+          src="/ich-bleibe-neugierig-bold.png"
+          alt="Ich bleibe neugierig"
+          style="width:min(560px,100%)"
+        />
       </section>
 
       <!-- Gallery -->
@@ -111,7 +111,7 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
             <button
               class="kk-tile kk-open-btn"
               data-slug={post.id}
-              data-cat={post.category}
+              data-group={post.group}
               aria-label={post.title}
               style={`background:${post.tint}`}
             >
@@ -165,6 +165,7 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
             <h2 id="kk-card-title" class="kk-card-title"></h2>
           </div>
           <div id="kk-card-body" class="kk-card-body"></div>
+          <p class="kk-card-signoff">Merci und adieu,<br />Keron</p>
         </div>
       </article>
     </div>
@@ -175,6 +176,7 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
         id={`post-body-${post.id}`}
         data-title={post.title}
         data-cat={post.category}
+        data-date={post.date}
         data-cover={post.cover ?? ''}
         data-tint={post.tint}
         hidden
@@ -184,7 +186,7 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
 
     <script>
       // ── State ──────────────────────────────────────────────────
-      let filter = 'All';
+      let filter = 'all';
       let openSlug: string | null = null;
       let lastFocus: HTMLElement | null = null;
       let hoverCount = 0;
@@ -211,11 +213,11 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
           b.style.opacity = active ? '1' : '0.45';
         });
         document.querySelectorAll<HTMLButtonElement>('#kk-gallery .kk-tile').forEach(tile => {
-          tile.hidden = filter !== 'All' && tile.dataset.cat !== filter;
+          tile.hidden = filter !== 'all' && tile.dataset.group !== filter;
         });
       });
 
-      // ── Hover glass (JS manages show/hide; z-index handled by CSS) ──
+      // ── Hover glass ────────────────────────────────────────────
       gallery.addEventListener('mouseenter', e => {
         if ((e.target as HTMLElement).classList.contains('kk-tile') && !openSlug) {
           hoverCount++;
@@ -230,17 +232,24 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
         }
       }, true);
 
-      // ── Populate card DOM (called before transition starts) ────
+      // ── Format date ────────────────────────────────────────────
+      function formatDate(iso: string) {
+        const d = new Date(iso + 'T00:00:00');
+        return d.toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' });
+      }
+
+      // ── Populate card DOM ──────────────────────────────────────
       function populateCard(slug: string) {
         const source = document.getElementById(`post-body-${slug}`);
         if (!source) return false;
 
         const title = source.dataset.title!;
         const cat   = source.dataset.cat!;
+        const date  = source.dataset.date!;
         const cover = source.dataset.cover!;
         const tint  = source.dataset.tint!;
 
-        cardCat.textContent   = cat;
+        cardCat.textContent   = `${cat} · ${formatDate(date)}`;
         cardTitle.textContent = title;
         cardBody.innerHTML    = source.innerHTML;
 

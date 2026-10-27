@@ -23,7 +23,7 @@ html {
 body { min-height: 100dvh; overflow-x: hidden; }
 
 a { color: var(--ink); text-decoration: none; }
-a:hover { text-decoration: underline; text-underline-offset: 3px; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #3B82C4; }
 
 img { display: block; max-width: 100%; }
 
@@ -53,17 +53,25 @@ img { display: block; max-width: 100%; }
   aspect-ratio: 3 / 2;
   overflow: hidden;
   background: #DCEAF5;
-  transition: transform .25s ease;
+  transition: transform .35s ease-out, filter .35s ease-out, box-shadow .35s ease-out;
 }
 .kk-tile img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   pointer-events: none;
+  filter: grayscale(1) contrast(.95) brightness(1.04);
+  transition: filter .35s ease-out;
 }
-.kk-tile:hover {
-  transform: scale(1.06);
+.kk-tile:hover,
+.kk-tile:focus-visible {
+  transform: scale(1.08);
   z-index: 20;
+  box-shadow: 0 4px 24px rgba(59, 130, 196, .25);
+}
+.kk-tile:hover img,
+.kk-tile:focus-visible img {
+  filter: grayscale(0);
 }
 
 /* ─── Nav link button ─────────────────────────────────────── */
@@ -82,7 +90,7 @@ img { display: block; max-width: 100%; }
 .kk-link:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
-  text-decoration-color: var(--accent);
+  text-decoration-color: #3B82C4;
   color: var(--ink);
 }
 
@@ -93,7 +101,7 @@ img { display: block; max-width: 100%; }
   z-index: 10;
   pointer-events: none;
   opacity: 0;
-  background: rgba(240, 248, 253, .25);
+  background: rgba(147, 168, 188, .18);
   backdrop-filter: blur(12px) saturate(1.4);
   -webkit-backdrop-filter: blur(12px) saturate(1.4);
   transition: opacity .3s ease;
@@ -206,6 +214,13 @@ img { display: block; max-width: 100%; }
 }
 .kk-card-body p { margin: 0; }
 .kk-card-body p + p { margin-top: 12px; }
+
+.kk-card-signoff {
+  padding: 0 6px 24px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
 .kk-card-body img {
   width: 100%;
   aspect-ratio: 3 / 2;
