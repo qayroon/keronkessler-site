@@ -34,11 +34,11 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
 ---
 
 <!doctype html>
-<html lang="de">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Keron Kessler — Strategist and writer on culture, media and marketing" />
+    <meta name="description" content="Keron Kessler — strategist and writer on culture, media and marketing" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -68,7 +68,7 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
         </div>
 
         <!-- Nav: Filter + Selected Work -->
-        <nav aria-label="Filter und ausgewählte Texte" style="flex:0 1 300px;display:flex;flex-direction:column;gap:14px">
+        <nav aria-label="Filter and selected work" style="flex:0 1 300px;display:flex;flex-direction:column;gap:14px">
           <div>
             <span>Filter:</span>
             <div id="kk-filters" style="display:flex;flex-direction:column;margin-top:4px">
@@ -102,7 +102,7 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
       </section>
 
       <!-- Gallery -->
-      <section aria-label="Texte">
+      <section aria-label="Articles">
         <div
           id="kk-gallery"
           style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px"
@@ -146,12 +146,12 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
       <button
         id="kk-veil"
         class="kk-veil"
-        aria-label="Schließen"
+        aria-label="Close"
         tabindex="-1"
       ></button>
 
       <article id="kk-card" class="kk-card" tabindex="-1">
-        <button id="kk-close" class="kk-close" aria-label="Schließen">
+        <button id="kk-close" class="kk-close" aria-label="Close">
           <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
             <path d="M3 3l10 10M13 3L3 13" />
           </svg>
@@ -233,9 +233,11 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
       }, true);
 
       // ── Format date ────────────────────────────────────────────
+      const catMap: Record<string, string> = { Strategie: 'Strategy', Medien: 'Media', Gesellschaft: 'Society', Kultur: 'Culture' };
+
       function formatDate(iso: string) {
         const d = new Date(iso + 'T00:00:00');
-        return d.toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' });
+        return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
       }
 
       // ── Populate card DOM ──────────────────────────────────────
@@ -249,7 +251,7 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
         const cover = source.dataset.cover!;
         const tint  = source.dataset.tint!;
 
-        cardCat.textContent   = `${cat} · ${formatDate(date)}`;
+        cardCat.textContent   = `${catMap[cat] ?? cat} · ${formatDate(date)}`;
         cardTitle.textContent = title;
         cardBody.innerHTML    = source.innerHTML;
 
