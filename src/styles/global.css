@@ -17,6 +17,7 @@ html {
   font-size: 15px;
   line-height: 1.45;
   -webkit-font-smoothing: antialiased;
+  scroll-snap-type: y proximity;
 }
 
 body { min-height: 100dvh; overflow-x: hidden; }
@@ -37,14 +38,9 @@ img { display: block; max-width: 100%; }
   50%  { transform: translate(-10%, -4%) scale(.95); }
   100% { transform: translate(0, 0) scale(1.1); }
 }
-@keyframes kkNudge {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(4px); }
-}
 
 .kk-blob-a { animation: kkDriftA 18s ease-in-out infinite; }
 .kk-blob-b { animation: kkDriftB 22s ease-in-out infinite; }
-.kk-nudge  { animation: kkNudge 1.8s ease-in-out infinite; }
 
 /* ─── Tile (thumbnail) ────────────────────────────────────── */
 .kk-tile {
@@ -57,7 +53,7 @@ img { display: block; max-width: 100%; }
   aspect-ratio: 3 / 2;
   overflow: hidden;
   background: #DCEAF5;
-  transition: transform .25s ease, box-shadow .25s ease;
+  transition: transform .25s ease;
 }
 .kk-tile img {
   width: 100%;
@@ -66,8 +62,8 @@ img { display: block; max-width: 100%; }
   pointer-events: none;
 }
 .kk-tile:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(47, 110, 158, .18);
+  transform: scale(1.06);
+  z-index: 20;
 }
 
 /* ─── Nav link button ─────────────────────────────────────── */
@@ -129,25 +125,19 @@ img { display: block; max-width: 100%; }
   padding: 0;
   cursor: zoom-out;
   opacity: 0;
-  background: rgba(248, 251, 253, .35);
-  backdrop-filter: blur(12px) saturate(1.4);
-  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  background: rgba(248, 251, 253, .55);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
   transition: opacity .45s cubic-bezier(.2, .8, .2, 1);
 }
 .kk-overlay.is-open .kk-veil { opacity: 1; }
 
-/* ─── Card ────────────────────────────────────────────────── */
+/* ─── Card (borderless, floats over blurred veil) ─────────── */
 .kk-card {
   position: relative;
   width: min(680px, 100%);
   max-height: 84vh;
   overflow-y: auto;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, .5);
-  border: 1px solid rgba(255, 255, 255, .8);
-  box-shadow: 0 20px 60px rgba(47, 110, 158, .14), inset 0 1px 0 rgba(255, 255, 255, .9);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
   opacity: 0;
   transform: translateY(24px) scale(.94);
   transition: opacity .45s cubic-bezier(.2, .8, .2, 1), transform .55s cubic-bezier(.2, .8, .2, 1);
@@ -165,7 +155,7 @@ img { display: block; max-width: 100%; }
   position: sticky;
   top: 12px;
   float: right;
-  margin: 12px 12px 0 0;
+  margin: 0 0 0 0;
   z-index: 2;
   width: 40px;
   height: 40px;
@@ -182,7 +172,7 @@ img { display: block; max-width: 100%; }
 
 /* ─── Card interior ───────────────────────────────────────── */
 .kk-card-inner {
-  padding: 14px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -194,6 +184,7 @@ img { display: block; max-width: 100%; }
   border-radius: 8px;
   object-fit: cover;
   background: #E8F2FA;
+  view-transition-name: none;
 }
 
 .kk-card-meta {
@@ -223,15 +214,36 @@ img { display: block; max-width: 100%; }
   background: #E8F2FA;
 }
 
+/* ─── View transition morph ───────────────────────────────── */
+::view-transition-old(hero),
+::view-transition-new(hero) {
+  animation-duration: .45s;
+  animation-timing-function: cubic-bezier(.2, .8, .2, 1);
+}
+
 /* ─── Focus rings ─────────────────────────────────────────── */
 .kk-tile:focus-visible,
 .kk-link:focus-visible,
 .kk-close:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 
+/* ─── Footer ──────────────────────────────────────────────── */
+.kk-footer {
+  scroll-snap-align: start;
+  padding: 20px 24px;
+  display: flex;
+  gap: 16px;
+}
+.kk-footer a {
+  font-size: 12px;
+  color: var(--muted);
+}
+.kk-footer a:hover { color: var(--ink); text-decoration: underline; }
+
 /* ─── Reduced motion ──────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .kk-blob-a, .kk-blob-b, .kk-nudge { animation: none; }
+  .kk-blob-a, .kk-blob-b { animation: none; }
   .kk-tile, .kk-glass, .kk-veil, .kk-card { transition: none; }
+  ::view-transition-old(hero), ::view-transition-new(hero) { animation: none; }
 }
 
 /* ─── Legal pages ─────────────────────────────────────────── */

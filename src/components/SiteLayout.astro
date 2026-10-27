@@ -23,6 +23,10 @@ const posts = allPosts.map((post, i) => ({
   tint: tints[i % tints.length],
   html: post.rendered?.html ?? '',
 }));
+
+const siteEntries = await getCollection('site');
+const site = siteEntries[0];
+const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
 ---
 
 <!doctype html>
@@ -45,22 +49,17 @@ const posts = allPosts.map((post, i) => ({
     </div>
 
     <!-- Main content -->
-    <div style="position:relative;z-index:1;padding:20px 24px 48px;box-sizing:border-box;display:flex;flex-direction:column;gap:64px">
+    <div style="position:relative;padding:20px 24px 48px;box-sizing:border-box;display:flex;flex-direction:column;gap:64px;min-height:100dvh">
 
       <!-- Header: About + Nav -->
       <header style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:32px">
 
         <!-- About -->
         <div style="flex:1 1 320px;max-width:460px;display:flex;flex-direction:column;gap:14px">
-          <p>Keron Kessler schreibt über Kultur, Gesellschaft und das, was Marken mit Menschen macht. Strategieberater aus Frankfurt — überzeugter Grenzgänger zwischen Ideen, die sich eigentlich nichts zu sagen hätten.</p>
-          <p>Manchmal reicht ein Gedanke, der in die falsche Richtung weitergedacht wird, um die richtige Frage zu stellen.</p>
+          {aboutParagraphs.map((p: string) => <p>{p}</p>)}
           <p>
             Contact:<br />
-            <a href="mailto:keron@keronkessler.com">keron@keronkessler.com</a>
-          </p>
-          <p style="margin-top:4px;font-size:13px;color:var(--muted)">
-            <a href="/impressum" style="color:var(--muted)">Impressum</a> &nbsp;·&nbsp;
-            <a href="/datenschutz" style="color:var(--muted)">Datenschutz</a>
+            <a href={`mailto:${site.data.contact_email}`}>{site.data.contact_email}</a>
           </p>
         </div>
 
@@ -95,10 +94,11 @@ const posts = allPosts.map((post, i) => ({
       </header>
 
       <!-- Showreel -->
-      <section aria-label="Showreel" style="display:flex;justify-content:center">
+      <section aria-label="Showreel" style="display:flex;flex-direction:column;align-items:center;gap:8px">
         <div style="width:min(640px,100%);aspect-ratio:16/9;background:rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;border-radius:4px">
           <span style="font-size:13px;color:var(--muted)">[Loop video / GIF — tbd]</span>
         </div>
+        <p style="font-size:13px;color:var(--muted)">{site.data.showreel_caption}</p>
       </section>
 
       <!-- Gallery -->
@@ -124,6 +124,12 @@ const posts = allPosts.map((post, i) => ({
         </div>
       </section>
     </div>
+
+    <!-- Footer -->
+    <footer class="kk-footer" aria-label="Legal">
+      <a href="/impressum">Impressum</a>
+      <a href="/datenschutz">Datenschutz</a>
+    </footer>
 
     <!-- Glass overlay (hover effect) -->
     <div id="kk-glass" class="kk-glass" aria-hidden="true"></div>
@@ -157,7 +163,6 @@ const posts = allPosts.map((post, i) => ({
           <div class="kk-card-meta">
             <span id="kk-card-cat" class="kk-card-cat"></span>
             <h2 id="kk-card-title" class="kk-card-title"></h2>
-            <span class="kk-nudge" aria-hidden="true" style="margin-top:10px;font-size:13px;color:var(--muted)">Scroll ↓</span>
           </div>
           <div id="kk-card-body" class="kk-card-body"></div>
         </div>
@@ -182,7 +187,7 @@ const posts = allPosts.map((post, i) => ({
       let filter = 'All';
       let openSlug: string | null = null;
       let lastFocus: HTMLElement | null = null;
-      let hoverCount = 0; // track concurrent hovers for glass
+      let hoverCount = 0;
 
       const gallery   = document.getElementById('kk-gallery')!;
       const glass     = document.getElementById('kk-glass')!;
@@ -206,18 +211,15 @@ const posts = allPosts.map((post, i) => ({
           b.style.opacity = active ? '1' : '0.45';
         });
         document.querySelectorAll<HTMLButtonElement>('#kk-gallery .kk-tile').forEach(tile => {
-          const match = filter === 'All' || tile.dataset.cat === filter;
-          tile.hidden = !match;
+          tile.hidden = filter !== 'All' && tile.dataset.cat !== filter;
         });
       });
 
-      // ── Hover glass ────────────────────────────────────────────
+      // ── Hover glass (JS manages show/hide; z-index handled by CSS) ──
       gallery.addEventListener('mouseenter', e => {
         if ((e.target as HTMLElement).classList.contains('kk-tile') && !openSlug) {
           hoverCount++;
           if (hoverCount === 1) glass.classList.add('is-visible');
-          const tile = e.target as HTMLElement;
-          tile.style.zIndex = '20';
         }
       }, true);
 
@@ -225,53 +227,77 @@ const posts = allPosts.map((post, i) => ({
         if ((e.target as HTMLElement).classList.contains('kk-tile')) {
           hoverCount = Math.max(0, hoverCount - 1);
           if (hoverCount === 0) glass.classList.remove('is-visible');
-          const tile = e.target as HTMLElement;
-          tile.style.zIndex = '';
         }
       }, true);
 
-      // ── Open post ──────────────────────────────────────────────
-      function openPost(slug: string, pushState = true) {
+      // ── Populate card DOM (called before transition starts) ────
+      function populateCard(slug: string) {
         const source = document.getElementById(`post-body-${slug}`);
-        if (!source) return;
+        if (!source) return false;
 
-        const title  = source.dataset.title!;
-        const cat    = source.dataset.cat!;
-        const cover  = source.dataset.cover!;
-        const tint   = source.dataset.tint!;
+        const title = source.dataset.title!;
+        const cat   = source.dataset.cat!;
+        const cover = source.dataset.cover!;
+        const tint  = source.dataset.tint!;
 
         cardCat.textContent   = cat;
         cardTitle.textContent = title;
         cardBody.innerHTML    = source.innerHTML;
 
         if (cover) {
-          cardCover.innerHTML = `<img src="${cover}" alt="" class="kk-card-cover" style="width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:8px" />`;
+          cardCover.innerHTML = `<img src="${cover}" alt="" style="width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:8px" />`;
         } else {
           cardCover.style.background = tint;
           cardCover.innerHTML = '';
         }
-
-        overlay.setAttribute('aria-label', title);
-        overlay.setAttribute('aria-hidden', 'false');
-        overlay.classList.add('is-open');
-        glass.classList.remove('is-visible');
-
-        openSlug = slug;
-        if (pushState) {
-          history.pushState({ slug }, '', `/texte/${slug}`);
-        }
-
-        requestAnimationFrame(() => card.focus());
+        return true;
       }
 
+      // ── Open post ──────────────────────────────────────────────
+      function openPost(slug: string, pushState = true) {
+        if (!populateCard(slug)) return;
+
+        const doOpen = () => {
+          overlay.setAttribute('aria-label', cardTitle.textContent!);
+          overlay.setAttribute('aria-hidden', 'false');
+          overlay.classList.add('is-open');
+          glass.classList.remove('is-visible');
+          openSlug = slug;
+          if (pushState) history.pushState({ slug }, '', `/texte/${slug}`);
+        };
+
+        const isTile = lastFocus?.classList.contains('kk-tile');
+
+        if ('startViewTransition' in document && isTile) {
+          const tile = lastFocus as HTMLElement;
+          tile.style.viewTransitionName = 'hero';
+
+          const vt = (document as any).startViewTransition(() => {
+            doOpen();
+            tile.style.viewTransitionName = '';
+            cardCover.style.viewTransitionName = 'hero';
+          });
+
+          vt.finished.then(() => {
+            cardCover.style.viewTransitionName = '';
+            card.focus();
+          }).catch(() => {
+            cardCover.style.viewTransitionName = '';
+          });
+        } else {
+          doOpen();
+          requestAnimationFrame(() => card.focus());
+        }
+      }
+
+      // ── Close post ─────────────────────────────────────────────
       function closePost(popState = false) {
+        cardCover.style.viewTransitionName = '';
         overlay.classList.remove('is-open');
         overlay.setAttribute('aria-hidden', 'true');
         openSlug = null;
 
-        if (!popState) {
-          history.pushState({}, '', '/');
-        }
+        if (!popState) history.pushState({}, '', '/');
 
         if (lastFocus) {
           lastFocus.focus();
@@ -283,12 +309,11 @@ const posts = allPosts.map((post, i) => ({
       document.addEventListener('click', e => {
         const btn = (e.target as HTMLElement).closest<HTMLElement>('.kk-open-btn');
         if (!btn) return;
-        const slug = btn.dataset.slug!;
-        lastFocus = btn as HTMLElement;
-        openPost(slug);
+        lastFocus = btn;
+        openPost(btn.dataset.slug!);
       });
 
-      // ── Close ──────────────────────────────────────────────────
+      // ── Close triggers ─────────────────────────────────────────
       closeBtn.addEventListener('click', () => closePost());
       veil.addEventListener('click', () => closePost());
       document.addEventListener('keydown', e => {
@@ -307,9 +332,7 @@ const posts = allPosts.map((post, i) => ({
 
       // ── Initial open (direct URL load) ────────────────────────
       const initialSlug = document.body.dataset.openSlug;
-      if (initialSlug) {
-        openPost(initialSlug, false);
-      }
+      if (initialSlug) openPost(initialSlug, false);
     </script>
   </body>
 </html>

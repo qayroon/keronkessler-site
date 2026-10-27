@@ -6,6 +6,25 @@ media_folder: "public/images/blog"
 public_folder: "/images/blog"
 
 collections:
+  - name: "site"
+    label: "Site Settings"
+    files:
+      - name: "main"
+        label: "Main"
+        file: "src/content/site/main.md"
+        fields:
+          - label: "About"
+            name: "about"
+            widget: "text"
+            hint: "Shown in the top-left About section"
+          - label: "Contact Email"
+            name: "contact_email"
+            widget: "string"
+          - label: "Showreel Caption"
+            name: "showreel_caption"
+            widget: "string"
+            hint: "Small caption below the showreel slot"
+
   - name: "blog"
     label: "Posts"
     folder: "src/content/blog"
