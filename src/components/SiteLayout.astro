@@ -60,10 +60,13 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
 
         <!-- About -->
         <div style="flex:1 1 320px;max-width:460px;display:flex;flex-direction:column;gap:14px">
-          {aboutParagraphs.map((p: string) => <p>{p}</p>)}
+          {aboutParagraphs.map((p: string) => <p set:html={p} />)}
           <p>
             Contact:<br />
             <a href={`mailto:${site.data.contact_email}`}>{site.data.contact_email}</a>
+          </p>
+          <p style="font-size:13px;color:var(--muted)">
+            <a href="/impressum" style="color:inherit">Impressum</a> · <a href="/datenschutz" style="color:inherit">Datenschutz</a>
           </p>
         </div>
 
@@ -124,12 +127,6 @@ const aboutParagraphs = site.data.about.split('\n\n').filter(Boolean);
         </div>
       </section>
     </div>
-
-    <!-- Footer -->
-    <footer class="kk-footer" aria-label="Legal">
-      <a href="/impressum">Impressum</a>
-      <a href="/datenschutz">Datenschutz</a>
-    </footer>
 
     <!-- Glass overlay (hover effect) -->
     <div id="kk-glass" class="kk-glass" aria-hidden="true"></div>

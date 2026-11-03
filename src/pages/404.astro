@@ -2,16 +2,15 @@
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title="404" currentPage="">
-  <div class="not-found">
-    <span class="not-found__backdrop" aria-hidden="true">404</span>
-    <div class="not-found__content">
-      <h1 class="not-found__heading">404</h1>
-      <p class="not-found__quote">
-        "Not all those who wander are lost — but you definitely are."
-      </p>
-      <p class="not-found__attribution">— not Tolkien</p>
-      <a href="/" class="not-found__link">← Back to home</a>
+<Base title="404">
+  <div aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0">
+    <div class="kk-blob-a" style="position:absolute;width:60vw;height:60vw;left:-10vw;top:-20vw;border-radius:50%;background:var(--accent);opacity:.55;filter:blur(90px)"></div>
+    <div class="kk-blob-b" style="position:absolute;width:40vw;height:40vw;right:-8vw;top:30%;border-radius:50%;background:var(--accent);opacity:.4;filter:blur(110px)"></div>
+  </div>
+  <div style="position:relative;z-index:1;display:flex;align-items:center;justify-content:center;min-height:100dvh;padding:24px;text-align:center">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <p>This page doesn't exist.</p>
+      <a href="/">← Back to Keron Kessler</a>
     </div>
   </div>
 </Base>
