@@ -295,15 +295,3 @@ img { display: block; max-width: 100%; }
   ::view-transition-old(hero), ::view-transition-new(hero) { animation: none; }
 }
 
-/* ─── Legal pages ─────────────────────────────────────────── */
-.legal-page {
-  max-width: 680px;
-  margin: 0 auto;
-  padding: 48px 24px 96px;
-}
-.legal-page h1 { font-size: 22px; font-weight: 700; margin-bottom: 24px; }
-.legal-page h2 { font-size: 15px; font-weight: 700; margin-top: 24px; margin-bottom: 8px; }
-.legal-page p  { margin-bottom: 12px; }
-.legal-page a  { text-decoration: underline; text-underline-offset: 3px; }
-.legal-back    { display: inline-block; margin-bottom: 32px; color: var(--muted); font-size: 13px; }
-.legal-back:hover { color: var(--ink); }
